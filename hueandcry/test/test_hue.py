@@ -10,7 +10,7 @@ class HueAndCryTestCase(unittest.TestCase):
         self.ip = config.get('hueandcry', 'ip')
         self.username = config.get('hueandcry', 'username')
 
-    def run_test(self):
+    def test_bridge(self):
         b = Bridge(ip=self.ip, username=self.username)
         self.assertTrue(isinstance(b, list))
 
