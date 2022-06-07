@@ -62,7 +62,9 @@ vector<HueLight> HueController::getGroupLights(const char* groupName) {
     JsonVariant groupInfo = group.value();
     if (strcmp(groupName, groupInfo["name"]) == 0) {
       for (JsonVariant lightId : groupInfo["lights"].as<JsonArray>()) {
-        lights.push_back(HueLight(lightId.as<String>()));
+        HueLight light = HueLight(lightId.as<String>());
+        fetchLightState(light);
+        lights.push_back(light);
       }
       return lights;
     }
@@ -70,12 +72,26 @@ vector<HueLight> HueController::getGroupLights(const char* groupName) {
   return lights;
 }
 
+void HueController::fetchLightState(HueLight& light) {
+  String path = String("lights/" + light.getId());
+  JsonObject state = _makeGetRequest(path)["state"];
+  light.setOn(state["on"]);
+  light.setBrightness(state["bri"]);
+  light.setHue(state["hue"]);
+  light.setSaturation(state["sat"]);
+}
+
 String HueController::getLightState(HueLight light) {
-  String path = String("lights/" + String(light.getId()));
+  String path = String("lights/" + light.getId());
   DynamicJsonDocument doc = _makeGetRequest(path);
   String output;
   serializeJson(doc, output);
   return output;
+}
+
+void HueController::updateLightState(HueLight light, String state) {
+  String path = String("lights/" + light.getId() + "/state");
+  _makeRequest(PUT, path, state);
 }
 
 DynamicJsonDocument HueController::_makeGetRequest(String path) {
@@ -97,12 +113,16 @@ DynamicJsonDocument HueController::_makeRequest(RequestType type, String path, S
   int httpCode;
   switch(type) {
     case GET:
+    default:
       httpCode = http.GET();
       break;
     case POST:
-    default:
       httpCode = http.POST(body);
       break;
+    case PUT:
+      httpCode = http.PUT(body);
+      break;
+      
   }
   if (httpCode < 0) {
     Serial.println("HTTP fetch failed");

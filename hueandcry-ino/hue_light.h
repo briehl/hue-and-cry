@@ -8,15 +8,26 @@ class HueLight
   public:
     HueLight(String id);
     void setState();
-    void setColor(const char* color);
-    const char* getColor();
-    void setBrightness(const char* brightness);
-    const char* getBrightness();
+    void setHue(unsigned int hue);
+    unsigned int getHue();
+    void setBrightness(unsigned int brightness);
+    unsigned int getBrightness();
+    void setSaturation(unsigned int saturation);
+    unsigned int getSaturation();
+    void setOn(bool isOn);
+    bool getOn();
     String getId();
+    String getState();
   private:
     String _id;
-    const char* _hue;
-    const char* _bri;
+    bool _on;
+    unsigned int _hue;
+    unsigned int _bri;
+    unsigned int _sat;
+    float _xy[2];
+    
+    
+    
 };
 
 #endif

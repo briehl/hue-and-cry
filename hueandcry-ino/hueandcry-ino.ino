@@ -35,9 +35,13 @@ void setup() {
 void loop() {
   Serial.println("Office lights:");
   for (HueLight light : lights) {
-    Serial.println("Light " + String(light.getId()));
-    Serial.println("\t" + hue.getLightState(light));
+    unsigned int newHue = random(65535);
+    light.setHue(newHue);
+    hue.updateLightState(light, light.getState());
+//    hue.setLightState(light, "{\"hue_inc\": 100}");
+//    Serial.println("Light " + String(light.getId()));
+//    Serial.println("\t" + hue.getLightState(light));
   }
-  Serial.println("HA!");
-  delay(10000);
+//  Serial.println("HA!");
+  delay(100);
 }

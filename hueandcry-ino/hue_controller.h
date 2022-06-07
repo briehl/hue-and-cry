@@ -18,6 +18,8 @@ class HueController
     vector<HueLight> getGroupLights(const char* groupName);
     void updateLight(HueLight light);
     String getLightState(HueLight light);
+    void updateLightState(HueLight light, String state);
+    void fetchLightState(HueLight& light);
   private:
     enum RequestType { GET, POST, PUT, UPDATE, DELETE };
     String _getHueIp();
